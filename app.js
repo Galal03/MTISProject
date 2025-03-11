@@ -25,28 +25,40 @@ try{
 }
 connect();
 
-
+let asyncHooks;
+try {
+  asyncHooks = require('async_hooks');
+} catch (e) {
+  asyncHooks = null;
+}
 
 
 
 app.use(router)
-const PORT = 4001;
-const fallbackPort = 4002;
+const PORTS = [4001, 4002, 4003, 4004, 4005];
+let currentPortIndex = 0;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-}).on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    console.log(`Port ${PORT} is in use. Falling back to port ${fallbackPort}`);
-    app.listen(fallbackPort, () => {
-      console.log(`Server is running on port ${fallbackPort}`);
-    });
-  } else {
-    console.error('Error starting server:', err);
-    process.exit(1);
-  }
-});
+const startServer = (port) => {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  }).on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      if (currentPortIndex < PORTS.length - 1) {
+        currentPortIndex++;
+        console.log(`Port ${port} is in use. Falling back to port ${PORTS[currentPortIndex]}`);
+        startServer(PORTS[currentPortIndex]);
+      } else {
+        console.error('All specified ports are in use. Cannot start server.');
+        process.exit(1);
+      }
+    } else {
+      console.error('Error starting server:', err);
+      process.exit(1);
+    }
+  });
+};
 
+startServer(PORTS[currentPortIndex]);
 
 
 
