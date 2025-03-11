@@ -30,16 +30,23 @@ connect();
 
 
 app.use(router)
+const PORT = 4001;
+const fallbackPort = 4002;
 
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+}).on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} is in use. Falling back to port ${fallbackPort}`);
+    app.listen(fallbackPort, () => {
+      console.log(`Server is running on port ${fallbackPort}`);
+    });
+  } else {
+    console.error('Error starting server:', err);
+    process.exit(1);
+  }
+});
 
-
-
-
-
-
-app.listen(3000,()=>{
-    console.log('server is running...')
-})
 
 
 
