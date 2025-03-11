@@ -5,7 +5,7 @@ const path = require('path')
 const router = require('./routes/mainroutes')
 const mongoose= require("mongoose")
 const User = require("./models/person")
-const async_hooks = require('async_hooks');
+const async_hooks = require('async_hooks'); // Corrected module name
 app.set('view engine','ejs')
 
 app.use(express.static(path.join('public')))
@@ -27,7 +27,7 @@ connect();
 
 let asyncHooks;
 try {
-  asyncHooks = require('async_hooks');
+  asyncHooks = require('async_hooks'); // Corrected module name
 } catch (e) {
   asyncHooks = null;
 }
@@ -39,7 +39,7 @@ const PORTS = [4001, 4002, 4003, 4004, 4005];
 let currentPortIndex = 0;
 
 const startServer = (port) => {
-  app.listen(port, () => {
+  app.listen(port, "0.0.0.0", () => {
     console.log(`Server is running on port ${port}`);
   }).on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
